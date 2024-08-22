@@ -4,8 +4,18 @@ import axios from "axios";
 // 게시물 생성 및 업데이트
 
 const PostForm = ({ post, onSuccess }) => {
-  const [title, setTitle] = useState(post ? post.title : "");
-  const [content, setContent] = useState(post ? post.content : "");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+    } else {
+      setTitle("");
+      setContent("");
+    }
+  }, [post]);
 
   const submitForm = (e) => {
     e.preventDefault();

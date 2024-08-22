@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import PostForm from "./PostForm";
 
-const PostList = () => {
+const PostList = ({ onEdit, editingPostId, onSuccess }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -26,7 +27,13 @@ const PostList = () => {
           <li key={post._id}>
             <h3>{post.title}</h3>
             <p>{post.content}</p>
+            <button onClick={() => onEdit(post._id)}>Edit</button>{" "}
+            {/* Edit 버튼 */}
             <button onClick={() => deletePost(post._id)}>Delete</button>
+            {/* 수정할 게시물에 대해 PostForm을 렌더링 */}
+            {editingPostId === post._id && (
+              <PostForm post={post} onSuccess={onSuccess} />
+            )}
           </li>
         ))}
       </ul>

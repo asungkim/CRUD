@@ -11,9 +11,9 @@ router.post("/", async (req, res) => {
 
   try {
     const savedPost = await post.save();
-    res.json(savedPost);
+    res.status(201).json(savedPost);
   } catch (err) {
-    res.json({ message: err });
+    res.status(400).json({ message: err });
   }
 });
 
@@ -23,40 +23,45 @@ router.get("/", async (req, res) => {
     const posts = await Post.find();
     res.json(posts);
   } catch (err) {
-    res.json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 });
 
-// 특정 아이디 찾기
+// 특정 게시물 찾기
 router.get("/:postId", async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (err) {
-    res.json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 });
 
 // UPDATE
 router.patch("/:postId", async (req, res) => {
   try {
-    const updatedPost = await Post.updateOne(
-      { _id: req.params.postId },
-      { $set: { title: req.body.title, content: req.body.content } }
+    const { title, content } = req.body;
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.postId,
+      { title, content },
+      { new: true, runValidators: true }
     );
+    if (!updatedPost) return res.status(404).json({ message: err.message });
     res.json(updatedPost);
   } catch (err) {
-    res.json({ message: err });
+    res.status(400).json({ message: err.message });
   }
 });
 
 //DELETE
 router.delete("/:postId", async (req, res) => {
   try {
-    const deletedPost = await Post.delete({ _id: req.params.postId });
-    res.json(deletedPost);
+    const deletedPost = await Post.findByIdAndDelete(req.params.postId);
+    if (!deletedPost) return res.status(404).json({ message: err.message });
+    res.status(204).send();
   } catch (err) {
-    res.json(err);
+    res.status(500).json({ message: err.message });
   }
 });
 
