@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
     const savedPost = await post.save();
     res.status(201).json(savedPost);
   } catch (err) {
-    res.status(400).json({ message: err });
+    res.status(400).json({ message: "Failed to Create Post." });
   }
 });
 
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     const posts = await Post.find();
     res.json(posts);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Failed to Find Posts" });
   }
 });
 
@@ -34,7 +34,7 @@ router.get("/:postId", async (req, res) => {
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Failed to Find specific post" });
   }
 });
 
@@ -50,7 +50,7 @@ router.patch("/:postId", async (req, res) => {
     if (!updatedPost) return res.status(404).json({ message: err.message });
     res.json(updatedPost);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: "Failed to update Post" });
   }
 });
 
@@ -61,7 +61,7 @@ router.delete("/:postId", async (req, res) => {
     if (!deletedPost) return res.status(404).json({ message: err.message });
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Failed to delete post" });
   }
 });
 
