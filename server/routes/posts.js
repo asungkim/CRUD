@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router(); // GET, POST, PUT, PATCH
+const { auth, adminOnly } = require("../middleware/auth");
 const Post = require("../models/Post");
 
 // CREATE
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
@@ -18,7 +19,7 @@ router.post("/", async (req, res) => {
 });
 
 // 모든 게시물들 조회
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const posts = await Post.find();
     res.json(posts);
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
 });
 
 // 특정 게시물 찾기
-router.get("/:postId", async (req, res) => {
+router.get("/:postId", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
     if (!post) return res.status(404).json({ message: "Post not found" });
@@ -39,7 +40,7 @@ router.get("/:postId", async (req, res) => {
 });
 
 // UPDATE
-router.patch("/:postId", async (req, res) => {
+router.patch("/:postId", auth, adminOnly, async (req, res) => {
   try {
     const { title, content } = req.body;
     const updatedPost = await Post.findByIdAndUpdate(
@@ -55,11 +56,11 @@ router.patch("/:postId", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:postId", async (req, res) => {
+router.delete("/:postId", auth, adminOnly, async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.postId);
     if (!deletedPost) return res.status(404).json({ message: err.message });
-    res.status(204).send();
+    res.status(200).json({ message: "Post Deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Failed to delete post" });
   }

@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const body_parser = require("body-parser");
-const postsRouter = require("./routes/posts");
 const path = require("path");
+
+const postsRouter = require("./routes/posts");
+const authRouter = require("./routes/auth");
 require("dotenv").config();
 
 const app = express();
@@ -15,6 +17,7 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
+app.use("/api/auth", authRouter);
 app.use("/api/posts", postsRouter); // /api/posts 로 시작하는 모든 요청이 라우터로 전달
 
 app.get("/", (req, res) => {
